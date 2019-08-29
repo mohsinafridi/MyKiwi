@@ -19,13 +19,12 @@ namespace DatingApp.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IKiwiRepository _repo;
-private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
-         public UsersController(IKiwiRepository repo,IMapper mapper,IHttpContextAccessor httpContextAccessor)
+         public UsersController(IKiwiRepository repo,IMapper mapper)
         {
             _mapper = mapper;
             _repo = repo;
-            _httpContextAccessor= httpContextAccessor;
+           
         }
          [AllowAnonymous]
          public string Get()

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using AutoMapper;
 
 namespace DatingApp.API.Controllers
 {
@@ -18,33 +19,35 @@ namespace DatingApp.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepository _repo;
-        private readonly IConfiguration _config;    
-        public AuthController(IAuthRepository repo,IConfiguration config)
+        private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
+        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
         {
-            _repo =repo;
+            _mapper = mapper;
+            _repo = repo;
             _config = config;
         }
 
         [HttpPost("register")]
         //[ProducesResponseType(typeof(User), StatusCodes.Status201Created)]
-       // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        // [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(UserDTO userDto)
         {
-          
+
             // Validate Request
-            userDto.Username =userDto.Username.ToLower();
-                
-                if(await _repo.UserExists(userDto.Username))
-                   return BadRequest("Username already exists.");
+            userDto.Username = userDto.Username.ToLower();
 
-                  var userToCreate =new User 
-                  {
-                     UserName =userDto.Username
-                  };
+            if (await _repo.UserExists(userDto.Username))
+                return BadRequest("Username already exists.");
 
-                   var createdUser =await _repo.Register(userToCreate,userDto.Password);
+            var userToCreate = new User
+            {
+                UserName = userDto.Username
+            };
 
-                   return StatusCode(201);
+            var createdUser = await _repo.Register(userToCreate, userDto.Password);
+
+            return StatusCode(201);
 
         }
 
@@ -52,7 +55,7 @@ namespace DatingApp.API.Controllers
         public async Task<IActionResult> Login(UserLoginDTO userLoginDto)
         {
             //  throw new Exception("asdasdasd");
-              var userFromRepo = await _repo.Login(userLoginDto.UserName.ToLower(), userLoginDto.Password);
+            var userFromRepo = await _repo.Login(userLoginDto.UserName.ToLower(), userLoginDto.Password);
 
             if (userFromRepo == null)
                 return Unauthorized();
@@ -79,8 +82,11 @@ namespace DatingApp.API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new {
-                token = tokenHandler.WriteToken(token)
+          var user =_mapper.Map<USerListDTO>(userFromRepo);
+            return Ok(new
+            {
+                token = tokenHandler.WriteToken(token),
+                user
             });
         }
     }

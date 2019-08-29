@@ -44,6 +44,8 @@ import { MemberEditResolver } from './_resolver/member-edit.resolver';
 
 // NGX Bootstrap
 import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
+import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
+import { FileUploadModule } from 'ng2-file-upload';
 
 
 export class CustomHammerConfig extends HammerGestureConfig  {
@@ -69,7 +71,8 @@ export function tokenGetter() {
     MemberCardComponent,
     MemberDetailComponent,
     MemberEditComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    PhotoEditorComponent
   ],
   imports: [
     BrowserModule,
@@ -79,6 +82,7 @@ export function tokenGetter() {
     TabsModule.forRoot(),
     RouterModule.forRoot(appRoutes),
     NgxGalleryModule,
+    FileUploadModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
