@@ -1,3 +1,6 @@
+import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
+
+import { MemberEditResolver } from './_resolver/member-edit.resolver';
 
 
 import { JwtModule } from '@auth0/angular-jwt';
@@ -26,6 +29,7 @@ import { AuthService } from './_services/auth.service';
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { MemberDetailResolver } from './_resolver/member-detail.resolver';
 import { MemberListResolver } from './_resolver/member-list.resolver';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
 
 
 export class CustomHammerConfig extends HammerGestureConfig  {
@@ -49,7 +53,8 @@ export function tokenGetter() {
     MemberListComponent,
     MessagesComponent,
     MemberCardComponent,
-    MemberDetailComponent
+    MemberDetailComponent,
+    MemberEditComponent
   ],
   imports: [
     BrowserModule,
@@ -67,7 +72,8 @@ export function tokenGetter() {
       }
     })
   ],
-  providers: [AuthService, ErrorInterceptorProvider, AlertifyService, AuthGuard, MemberDetailResolver, MemberListResolver ,
+  providers: [AuthService, ErrorInterceptorProvider, AlertifyService, AuthGuard, MemberDetailResolver, MemberListResolver
+    , MemberEditResolver, PreventUnsavedChanges ,
     { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }
   ],
   bootstrap: [AppComponent]

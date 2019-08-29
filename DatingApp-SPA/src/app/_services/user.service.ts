@@ -23,4 +23,8 @@ export class UserService {
     return this.http.get<User>('http://localhost:5000/api/users/' + id);
   }
 
+  updateUser(id: number, user: User) {
+    return this.http.put('http://localhost:5000/api/users/' + id, user);
+  }
+
 }
