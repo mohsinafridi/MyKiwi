@@ -1,16 +1,16 @@
-import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
 
-import { MemberEditResolver } from './_resolver/member-edit.resolver';
-
-
-import { JwtModule } from '@auth0/angular-jwt';
-import { NgxGalleryModule } from 'ngx-gallery';
 import { FormsModule } from '@angular/forms';
-import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { BrowserModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+// JWT
+import { JwtModule } from '@auth0/angular-jwt';
+
+// Picture Gallery
+import { NgxGalleryModule } from 'ngx-gallery';
+
+// Components
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NavComponent } from './nav/nav.component';
@@ -22,14 +22,28 @@ import { MemberListComponent } from './members/member-list/member-list.component
 import { MessagesComponent } from './messages/messages.component';
 import { appRoutes } from './routes';
 import { MemberCardComponent } from './members/member-card/member-card.component';
+import { MemberDetailComponent } from './members/member-detail/member-detail.component';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
 
+// Guards
 import { AuthGuard } from './_guards/auth.guard';
+import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
+
+// Pipes
+import {TimeAgoPipe} from 'time-ago-pipe';
+
+
+// Services
 import { AlertifyService } from './_services/alertify.service';
 import { AuthService } from './_services/auth.service';
-import { MemberDetailComponent } from './members/member-detail/member-detail.component';
+
+// Resolver
 import { MemberDetailResolver } from './_resolver/member-detail.resolver';
 import { MemberListResolver } from './_resolver/member-list.resolver';
-import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { MemberEditResolver } from './_resolver/member-edit.resolver';
+
+// NGX Bootstrap
+import { BsDropdownModule, TabsModule } from 'ngx-bootstrap';
 
 
 export class CustomHammerConfig extends HammerGestureConfig  {
@@ -54,7 +68,8 @@ export function tokenGetter() {
     MessagesComponent,
     MemberCardComponent,
     MemberDetailComponent,
-    MemberEditComponent
+    MemberEditComponent,
+    TimeAgoPipe
   ],
   imports: [
     BrowserModule,
