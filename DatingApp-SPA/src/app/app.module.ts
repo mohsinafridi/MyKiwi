@@ -42,6 +42,7 @@ import { AuthService } from './_services/auth.service';
 import { MemberDetailResolver } from './_resolver/member-detail.resolver';
 import { MemberListResolver } from './_resolver/member-list.resolver';
 import { MemberEditResolver } from './_resolver/member-edit.resolver';
+import { ListsResolver } from './_resolver/lists.resolver';
 
 // NGX Bootstrap
 import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule, ButtonsModule } from 'ngx-bootstrap';
@@ -98,7 +99,7 @@ export function tokenGetter() {
     })
   ],
   providers: [AuthService, ErrorInterceptorProvider, AlertifyService, AuthGuard, MemberDetailResolver, MemberListResolver
-    , MemberEditResolver, PreventUnsavedChanges ,
+    , MemberEditResolver, ListsResolver, PreventUnsavedChanges ,
     { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }
   ],
   bootstrap: [AppComponent]
