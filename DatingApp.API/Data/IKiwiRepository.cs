@@ -22,6 +22,11 @@ namespace DatingApp.API.Data
 
          // Likes Section
          Task<Like> GetLike(int userId,int recipientId);
+
+         // Message Section
+         Task<Message> GetMessage(int messageId);
+         Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams); // Inbox ,Outbox etc
+         Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId);
          
     }
 }
