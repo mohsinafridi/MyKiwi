@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  apiUrl: 'api/'   // because we are deploying it in API Project.
 };

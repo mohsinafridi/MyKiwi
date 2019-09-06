@@ -46,15 +46,14 @@ namespace DatingApp.API.Data
 
         public async Task<User> GetUser(int Id)
         {
-            var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(x => x.Id == Id);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == Id);
             return user;
         }
 
         public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
             //var users = await _context.Users.Include(p=>p.Photos).ToListAsync();  //immediate execution
-            var users = _context.Users.Include(p => p.Photos)
-                .OrderByDescending(u => u.LastActive).AsQueryable();
+            var users = _context.Users.OrderByDescending(u => u.LastActive).AsQueryable();
 
             users = users.Where(u => u.Id != userParams.UserId);
             users = users.Where(u => u.Gender == userParams.Gender);
@@ -98,10 +97,7 @@ namespace DatingApp.API.Data
 
         private async Task<IEnumerable<int>> GetUserLikes(int id, bool likers)
         {
-            var user = await _context.Users
-                .Include(x => x.Likers)
-                .Include(x => x.Likees)
-                .FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
             if (likers)
             {
@@ -123,43 +119,38 @@ namespace DatingApp.API.Data
         {
             return await _context.Messages.FirstOrDefaultAsync(m => m.Id == id);
         }
-       
-          // Get InBox ,OutBox Unread Message by Current Login User
+
+        // Get InBox ,OutBox Unread Message by Current Login User
         public async Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams)
         {
-            var messages = _context.Messages
-                            .Include(u => u.Sender).ThenInclude(p => p.Photos)
-                            .Include(u => u.Recipient).ThenInclude(p => p.Photos)
-                            .AsQueryable();
+            var messages = _context.Messages.AsQueryable();
 
             switch (messageParams.MessageContainer)
             {
                 case "Inbox":
-                    messages = messages.Where(x => x.RecipientId == messageParams.UserId  && !x.RecipientDeleted);
+                    messages = messages.Where(x => x.RecipientId == messageParams.UserId && !x.RecipientDeleted);
                     break;
 
                 case "Outbox":
                     messages = messages.Where(x => x.SenderId == messageParams.UserId && !x.SenderDeleted);
                     break;
 
-                    default:
+                default:
                     messages = messages.Where(x => x.RecipientId == messageParams.UserId && x.RecipientDeleted && !x.IsRead);
                     break;
             }
-            messages = messages.OrderByDescending(x=>x.MessageSent);
-            return await PagedList<Message>.CreateAsync(messages,messageParams.PageNumber,messageParams.PageSize);
+            messages = messages.OrderByDescending(x => x.MessageSent);
+            return await PagedList<Message>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
         }
 
         public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
         {
             var messages = await _context.Messages
-                            .Include(u => u.Sender).ThenInclude(p => p.Photos)
-                            .Include(u => u.Recipient).ThenInclude(p => p.Photos)
-                            .Where(m => m.RecipientId == userId && !m.RecipientDeleted && m.SenderId == recipientId 
+            .Where(m => m.RecipientId == userId && !m.RecipientDeleted && m.SenderId == recipientId
                             || m.RecipientId == recipientId && m.SenderId == userId && !m.SenderDeleted)
-                            .OrderByDescending(x=> x.MessageSent)
+                            .OrderByDescending(x => x.MessageSent)
                             .ToListAsync();
-            
+
             return messages;
         }
     }

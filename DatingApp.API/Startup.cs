@@ -25,12 +25,36 @@ namespace DatingApp.API
 
         public IConfiguration Configuration { get; }
 
+        // For Development
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>( x =>
+            { 
+                x.UseLazyLoadingProxies();
+                x.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            ConfigureServices(services);
+        }
+
+        // For Prodution 
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddDbContext<DataContext>( x =>
+            { 
+                x.UseLazyLoadingProxies();
+                x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            ConfigureServices(services);
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             services.AddDbContext<DataContext>(x =>  { x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")); });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-            .AddJsonOptions(opt=>
+            .AddJsonOptions(opt =>
             {
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
@@ -40,30 +64,31 @@ namespace DatingApp.API
             services.AddTransient<Seed>();
 
             // Scoped objects are the same within a request, but different across different requests
-            services.AddScoped<IAuthRepository , AuthRepository>(); 
-            services.AddScoped<IKiwiRepository , KiwiRepository>(); 
+            services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IKiwiRepository, KiwiRepository>();
             //Transient objects are created for every request (when requested). This lifetime works best for lightweight, stateless services
             //services.AddTransient<IAuthRepository ,AuthRepository>(); 
-           
-           // Singleton objects created the first time they’re requested (or when ConfigureServices is run and an instance is specified with the service registration).
-           // services.AddSingleton<IAuthRepository ,AuthRepository>(); 
-      
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-                            .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
-                
-                 services.AddScoped<LogUserActivity>();
-                 
+
+            // Singleton objects created the first time they’re requested (or when ConfigureServices is run and an instance is specified with the service registration).
+            // services.AddSingleton<IAuthRepository ,AuthRepository>(); 
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                      .AddJwtBearer(options =>
+                      {
+                          options.TokenValidationParameters = new TokenValidationParameters
+                          {
+                              ValidateIssuerSigningKey = true,
+                              IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                                  .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                              ValidateIssuer = false,
+                              ValidateAudience = false
+                          };
+                      });
+
+            services.AddScoped<LogUserActivity>();
+
         }
-               
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -73,12 +98,14 @@ namespace DatingApp.API
             }
             else
             {
-                app.UseExceptionHandler(builder => {
-                    builder.Run(async context => {
+                app.UseExceptionHandler(builder =>
+                {
+                    builder.Run(async context =>
+                    {
                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                         var error = context.Features.Get<IExceptionHandlerFeature>();
-                        if (error != null) 
+                        if (error != null)
                         {
                             context.Response.AddApplicationError(error.Error.Message);
                             await context.Response.WriteAsync(error.Error.Message);
@@ -86,14 +113,23 @@ namespace DatingApp.API
                     });
                 });
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-               // app.UseHsts();
+                // app.UseHsts();
             }
 
-           // app.UseHttpsRedirection();
-           
-            app.UseCors(x=>x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            // app.UseHttpsRedirection();
+
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseDefaultFiles();  // for prod build
+            app.UseStaticFiles();   // for prod build
+                                    // MVC middleware
+            app.UseMvc(routes =>
+            {
+                routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Fallback", action = "Index" }
+                );
+            });
         }
     }
 }
