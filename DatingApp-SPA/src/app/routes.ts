@@ -1,3 +1,4 @@
+import { LearnMoreComponent } from './learn-more/learn-more.component';
 import { MessagesResolver } from './_resolver/messages.resolver';
 import { ListsResolver } from './_resolver/lists.resolver';
 import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
@@ -24,10 +25,11 @@ export const appRoutes: Routes = [
         children: [
             { path: 'members' , component: MemberListComponent, resolve: { users : MemberListResolver} },
             { path: 'members/:id' , component: MemberDetailComponent, resolve: { user : MemberDetailResolver}},
-            { path: 'member/edit', component: MemberEditComponent ,
-             resolve: {user: MemberEditResolver} , canDeactivate: [ PreventUnsavedChanges] },
-            { path: 'messages' , component: MessagesComponent , resolve : {messages: MessagesResolver}},
+            { path: 'member/edit', component: MemberEditComponent , resolve: {user: MemberEditResolver} ,
+             canDeactivate: [ PreventUnsavedChanges] },
+            { path: 'messages' , component: MessagesComponent , resolve : { messages: MessagesResolver}},
             { path: 'lists' , component: ListsComponent , resolve : {users: ListsResolver} },
+            { path: 'learnmore' , component: LearnMoreComponent }
         ]
     },
     { path: '**' , redirectTo: '', pathMatch: 'full' }

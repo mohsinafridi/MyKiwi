@@ -25,7 +25,7 @@ import { MemberCardComponent } from './members/member-card/member-card.component
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
-
+import { LearnMoreComponent } from './learn-more/learn-more.component';
 
 // Guards
 import { AuthGuard } from './_guards/auth.guard';
@@ -78,7 +78,8 @@ export function tokenGetter() {
     MemberEditComponent,
     TimeAgoPipe,
     PhotoEditorComponent,
-    MemberMessagesComponent
+    MemberMessagesComponent,
+    LearnMoreComponent
   ],
   imports: [
     BrowserModule,
@@ -96,14 +97,14 @@ export function tokenGetter() {
     FileUploadModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: tokenGetter,
+        tokenGetter,
         whitelistedDomains: ['localhost:5000'],
         blacklistedRoutes: ['localhost:5000/api/auth']
       }
     })
   ],
   providers: [AuthService, ErrorInterceptorProvider, AlertifyService, AuthGuard, MemberDetailResolver, MemberListResolver
-    , MemberEditResolver, ListsResolver,MessagesResolver, PreventUnsavedChanges ,
+    , MemberEditResolver, ListsResolver, MessagesResolver, PreventUnsavedChanges ,
     { provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }
   ],
   bootstrap: [AppComponent]

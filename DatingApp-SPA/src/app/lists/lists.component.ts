@@ -17,7 +17,7 @@ export class ListsComponent implements OnInit {
   likesParam: string;
 
   constructor(private authService: AuthService, private userService: UserService,
-    private route: ActivatedRoute, private alertify: AlertifyService) { }
+              private route: ActivatedRoute, private alertify: AlertifyService) { }
 
   ngOnInit() {
     this.route.data.subscribe(data => {
@@ -28,6 +28,7 @@ export class ListsComponent implements OnInit {
   }
 
   loadUsers() {
+    debugger;
     this.userService
       .getUsers(this.pagination.currentPage, this.pagination.itemsPerPage, null, this.likesParam)
       .subscribe((res: PaginatedResult<User[]>) => {

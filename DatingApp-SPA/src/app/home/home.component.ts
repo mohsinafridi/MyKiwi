@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +10,7 @@ import { Component, OnInit } from '@angular/core';
 export class HomeComponent implements OnInit {
   registerMode = false;
   values: any;
-  constructor(private http: HttpClient) { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     // this.getValues();
@@ -19,19 +20,10 @@ export class HomeComponent implements OnInit {
     this.registerMode = true;
   }
 
-  // cancelRegisterMode(registerMode: boolean) {
-  //   this.registerMode = registerMode;
-  // }
-
-//   getValues() {
-//     this.http.get('http://localhost:5000/api/values').subscribe(response => {
-//       this.values = response;
-//     } , error => {
-//       console.log(error);
-//     });
-// }
-
 cancelRegisterMode(registerMode: boolean) {
        this.registerMode = registerMode;
+}
+goToLearnMore() {
+  this.router.navigate(['learnmore']);
 }
 }

@@ -14,7 +14,7 @@ export class MessagesResolver implements Resolve<Message[]> {
     pageSize = 5;
     messageContainer = 'Unread';
     constructor(private userService: UserService, private router: Router, private alertify: AlertifyService,
-        private authService: AuthService) { }
+                private authService: AuthService) { }
 
     resolve(route: ActivatedRouteSnapshot): Observable<Message[]> {
         return this.userService.getMessages(this.authService.decodedToken.nameid,
